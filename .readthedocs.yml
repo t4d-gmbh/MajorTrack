@@ -7,4 +7,4 @@ python:
          path: .
          extra_requirements:
             - docs
-            - matplotlib
+            - sphinxcontrib-bibtex
