@@ -32,7 +32,7 @@ You can get the latest version with
 
 .. code-block:: console
 
-    pip install --upgrade --no-deps git+https://github.com/j-i-l/majortrack.git
+    pip install --upgrade git+https://github.com/j-i-l/majortrack.git
 
 .. exclusion-p2
 
