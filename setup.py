@@ -32,7 +32,7 @@ setup(
         license='GPL-3',
         packages=['majortrack'],
         install_requires=[
-          'matplotlib', 'pyalluv==0.1', 'colorseq==0.1'
+          'matplotlib', 'pyalluv', 'colorseq'
         ],
         dependency_links=[
             'git+https://github.com/j-i-l/pyalluv.git@v0.1#egg=pyalluv',
