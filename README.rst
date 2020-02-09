@@ -16,7 +16,7 @@ Effect of the history parameter
 .. exclusion-p1
 
 
-  .. figure:: docs/_static/history.png
+.. figure:: docs/_static/history.png
 
 
 The script generating this figure can be found `here`_.
