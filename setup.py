@@ -32,12 +32,10 @@ setup(
         license='GPL-3',
         packages=['majortrack'],
         install_requires=[
-          'matplotlib', 'pyalluv==0.1', 'colorseq==0.1'
+            "matplotlib",
+            "pyalluv @ git+https://github.com/j-i-l/pyalluv@v0.1",
+            "colorsequence @ git+https://github.com/j-i-l/colorsequence@v0.1",
         ],
-        dependency_links=[
-            'git+https://github.com/j-i-l/pyalluv.git@v0.1#egg=pyalluv',
-            'git+https://github.com/j-i-l/colorsequence.git@v0.1#egg=colorseq'
-            ],
         test_suite='nose.collector',
         tests_require=['nose', 'nose-cover3'],
         # ToDo:
