@@ -2,10 +2,6 @@
 # -*- coding: utf-8 -*-
 
 r"""
-This python package implements the evolutionary clustering algorithm
-presented in the paper by :cite:`liechti2019time`.
-
-.. bibliography:: ../references.bib
 """
 import itertools
 from functools import wraps
@@ -67,6 +63,8 @@ class MajorTrack(object):
         Determine if :obj:`~LazyList`'s should be used to store data about
         dynamic clusters or normal lists.
         Most likely you want to use normal lists.
+        
+    .. bibliography:: ../references.bib
 
     Attributes
     ==========
