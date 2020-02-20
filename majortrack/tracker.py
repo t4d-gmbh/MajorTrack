@@ -68,7 +68,11 @@ class MajorTrack(object):
 
     Attributes
     ==========
-    clusters: list or LazyList
+    clusterings: list(list(set)) or LazyList
+      Holds for each time point the configuration of the respective clustering.
+      The clustering is given by a list of member-`set`s, with each `set`
+      containing the data sources in a cluster.
+    dcs: list or LazyList
       Ensemble of all dynamic clusters.
 
       .. todo::
@@ -102,7 +106,7 @@ class MajorTrack(object):
 
     group_mappings: list(list)
       Holds for each slice a list of mapping sets. The list is ordered like
-      :obj:`~.MajorTrack.grougings`.
+      :obj:`~.MajorTrack.clusterings`.
 
       Example
       --------
@@ -117,13 +121,13 @@ class MajorTrack(object):
 
     group_tracings: list(list)
       Holds for each slice a list of tracing sets. The list is ordered like
-      :attr:`~.MajorTrack.grougings`.
+      :attr:`~.MajorTrack.clusterings`.
     group_mappers: list(list)
       Holds for each slice a list of mapper sets. The list is ordered like
-      :attr:`~.MajorTrack.grougings`.
+      :attr:`~.MajorTrack.clusterings`.
     group_tracers: list(list)
       Holds for each slice a list of tracer sets. The list is ordered like
-      :attr:`~.MajorTrack.grougings`.
+      :attr:`~.MajorTrack.clustering`.
     comm_nbr: int
       Number of dynamic clusters present in dataset.
     comm_all: list(dc index what type?)
@@ -1535,9 +1539,9 @@ class MajorTrack(object):
         None: None
           Adds new attributes:
 
-          - attr:`~.MajorTrack.comm_group_members`
-          - attr:`~.MajorTrack.comm_all`
-          - attr:`~.MajorTrack.comm_nbr`
+          - :attr:`~.MajorTrack.comm_group_members`
+          - :attr:`~.MajorTrack.comm_all`
+          - :attr:`~.MajorTrack.comm_nbr`
 
         """
         _all_comms = []
@@ -1572,7 +1576,7 @@ class MajorTrack(object):
         None: None
           Adds new attributes:
 
-          - attr:`~.MajorTrack.comm_members`
+          - :attr:`~.MajorTrack.comm_members`
         """
         self.comm_members = []
         for idx in range(self.length):
@@ -1601,7 +1605,7 @@ class MajorTrack(object):
         None: None
           Adds new attributes:
 
-          - attr:`~.MajorTrack.individual_group_membership`
+          - :attr:`~.MajorTrack.individual_group_membership`
         """
         self.individual_group_membership = []
         for idx in range(self.length):
@@ -1625,7 +1629,7 @@ class MajorTrack(object):
         None: None
           Adds new attributes:
 
-          - attr:`~.MajorTrack.individual_membership`
+          - :attr:`~.MajorTrack.individual_membership`
         """
         self.individual_membership = []
         for idx in range(self.length):
@@ -1646,7 +1650,7 @@ class MajorTrack(object):
         None: None
           Adds new attributes:
 
-          - attr:`~.MajorTrack.community_births`
+          - :attr:`~.MajorTrack.community_births`
         """
         self.community_births = []
         _births = []
@@ -1677,7 +1681,7 @@ class MajorTrack(object):
         None: None
           Adds new attributes:
 
-          - attr:`~.MajorTrack.community_deaths`
+          - :attr:`~.MajorTrack.community_deaths`
 
         """
         # at t0 there can be no deaths
@@ -1705,7 +1709,7 @@ class MajorTrack(object):
         None: None
           Adds new attributes:
 
-          - attr:`~.MajorTrack.community_lifespans`
+          - :attr:`~.MajorTrack.community_lifespans`
 
         """
         _life_spans = {
@@ -1769,11 +1773,11 @@ class MajorTrack(object):
         None: None
           Adds new attributes:
 
-          - attr:`~.MajorTrack.community_splits`
-          - attr:`~.MajorTrack.community_cby_splits`
-          - attr:`~.MajorTrack.community_cby_split_merges`
-          - attr:`~.MajorTrack.community_dby_splits`
-          - attr:`~.MajorTrack.community_dby_split_merges`
+          - :attr:`~.MajorTrack.community_splits`
+          - :attr:`~.MajorTrack.community_cby_splits`
+          - :attr:`~.MajorTrack.community_cby_split_merges`
+          - :attr:`~.MajorTrack.community_dby_splits`
+          - :attr:`~.MajorTrack.community_dby_split_merges`
 
         """
         # no splits possible at the first time step
@@ -1865,9 +1869,9 @@ class MajorTrack(object):
         None: None
           Adds new attributes:
 
-          - attr:`~.MajorTrack.community_merges`
-          - attr:`~.MajorTrack.community_cby_merges`
-          - attr:`~.MajorTrack.community_dby_merges`
+          - :attr:`~.MajorTrack.community_merges`
+          - :attr:`~.MajorTrack.community_cby_merges`
+          - :attr:`~.MajorTrack.community_dby_merges`
 
         """
         # no merges possible at the first time step
@@ -1936,7 +1940,7 @@ class MajorTrack(object):
         None: None
           Adds new attributes:
 
-          - attr:`~.MajorTrack.community_growths`
+          - :attr:`~.MajorTrack.community_growths`
         """
         # birth events are not growth events
         self.community_growths = [[]]
