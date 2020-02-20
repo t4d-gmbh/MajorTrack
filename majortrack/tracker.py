@@ -2510,7 +2510,10 @@ class MajorTrack(object):
                     )
             prev_idx = idx
         self.sp_clusters = {
-                _clusters_x_pos[idx]: _clusters[idx]
+                _clusters_x_pos[idx]: [
+                    cluster for cluster in _clusters[idx]
+                    if cluster is not None
+                    ]
                 for idx in range(len(_clusters))
                 }
         self.sp_fluxes = {
