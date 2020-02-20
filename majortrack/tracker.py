@@ -2098,7 +2098,7 @@ class MajorTrack(object):
                                 }
         return None
 
-    def get_community_coloring(self, n=None, iterator=None, *args, **kwargs):
+    def get_community_coloring(self, n=None, iterator=None, **kwargs):
         if n is None:
             n = self.comm_nbr
         use_dc = kwargs.get('distinct_colors', None)
@@ -2107,14 +2107,19 @@ class MajorTrack(object):
             assert n <= use_dc.n
             self.color_sequence = use_dc
         elif self.color_sequence is None:
-            self.color_sequence = DistinctColors(
-                        n,
-                        [0, 1], [0.2, 1.0], [0.9, 1.0],
+            dc_params = kwargs.get(
+                    'dc_params', dict(
                         h_shuffle=False,
                         s_shuffle=False,
                         h_init=0.1,
                         s_init=1.0,
                         v_init=1.0,
+                        )
+                    )
+            self.color_sequence = DistinctColors(
+                        n,
+                        [0, 1], [0.2, 1.0], [0.9, 1.0],
+                        **dc_params
                         )
         else:
             assert self.color_sequence.n >= n
