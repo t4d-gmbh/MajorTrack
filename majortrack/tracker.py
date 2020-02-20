@@ -2150,30 +2150,61 @@ class MajorTrack(object):
         If `iterator is not provided, then the alluvialdiagram will contain all
         the clustrings in the time series.
 
-        Parameters:
-        -----------
-        :param kwargs:
-            options:
-            --------
-            - cluster_location: 'center', 'start, 'end' location withing the
-                aggregation time window where the cluster should be put.
-                Default is 'center'
-            - cluster_width: with of the clusters
-            - cluster_label: None (default), 'groupsize', 'group_index'
-            - merged_edgecolor: edgecolor of merged groups
-            - merged_facecolor: facecolor of merged groups
-            - merged_linewidth: linewidth of merged groups
-            - cluster_facecolor: either single color or dict with idx as keys
-                holding a dict with group_id as key
-            - cluster_edgecolor: either single color or dict with idx as keys
-                holding a dict with group_id as key
-            - flux_facecolor: either single color or dict with idx as keys
-                holding a dict with cluster tuple as key, with the first
-                element a group id form time step idx and the second a group id
-                form time step idx+1
-            - new_coloring: False
-            - distinct_colors: can be an instance of DistinctColors that will
-                be used for the coloring
+        Parameters
+        ==========
+        axes: :obj:`matplotlib.axes.Axes`
+          Axes to draw an Alluvial diagram on.
+        iterator: iter (default=None)
+          An iterator for the indices of the time series to include in the
+          alluvial diagram. If not provided then the entire time series is
+          used.
+        cluster_width: float
+          with of the clusters. This should be provided in the same units as
+          :attr:`~Majortrack.timepoints`.
+        \*args optional parameter:
+          Will be forwarded to the :class:`pyalluv.AlluvialPlot` call.
+        \**kwargs optional parameter:
+          cluster_location: str (default='center')
+            either 'center', 'start, 'end' location withing the aggregation
+            time window where the cluster should be put.
+          cluster_label: str (default=None)
+            determine how to label cluster. Possible options are:
+            
+            * 'groupsize'
+            * 'group_index'
+
+          merged_edgecolor: str (default=None)
+            edgecolor of merged clusters.
+          merged_facecolor: str (default=None)
+            facecolor of merged clusters.
+          merged_linewidth: float (default=None)
+            linewidth of merged clusters.
+          cluster_facecolor: str, dict(dict)
+            facecolor of clusters. Either provide a single color or a `dict`
+            with indices of the time series as keys, holding a dict with
+            cluster_id as key and colours as values.
+          cluster_edgecolor: str, dict(dict)
+            edgecolor of clusters. Either provide a single color or a `dict`
+            with indices of the time series as keys, holding a dict with
+            cluster_id as key and colours as values.
+          flux_facecolor: str, dict
+            either provide a single color, a keyword or a dict.
+
+            Valid keywords are: ``'cluster'``.
+            
+            If a dictionary is provided then the `idx` of the time series must
+            be the keys with another dict as value holding a dict with a tuple
+            as key and a color as value. The tuple's first element must  be a
+            group id form time step `idx` and the second a group id k form time
+            step `idx`+1
+          new_coloring: bool (default=False)
+            if a new color sequence should be generated or not.
+          distinct_colors: :obj:`colorseq.DistinctColors` (default=None)
+            the sequence of distinct colour to use.
+          target_clusters: list (default=None)
+            list of dynamic cluster id's to display in the alluvial diagram.
+            If provided, only the dynamic clusters specified in this list
+            will be displayed.
         """
         assert self.clusterings is not None
         # from matplotlib import pyplot as plt
@@ -2330,6 +2361,35 @@ class MajorTrack(object):
         else:
             _get_flux_linewidth = _def_linewidth
 
+        target_clusters = kwargs.get('target_clusters', False)
+        if not target_clusters:
+            def include_cluster(idx, group):
+                return True
+        else:
+            def include_cluster(idx, group):
+                if any(
+                        [
+                            indiv in self.comm_members[idx][comm]
+                            for indiv in group
+                            for comm in target_clusters
+                            if comm in self.comm_members[idx]
+                            ]
+                        ):
+                    return True
+                elif idx and any(
+                        [
+                            indiv in self.comm_members[idx-1][comm]
+                            for indiv in group
+                            for comm in target_clusters
+                            if comm in self.comm_members[idx-1]
+                            ]
+                        ):
+                    # check if in the previous snapshot members of this group
+                    # were in the target_clusters
+                    return True
+                else:
+                    return False
+
         merged_edgecolor = kwargs.get('merged_edgecolor', None)
         merged_facecolor = kwargs.get('merged_facecolor', None)
         merged_linewidth = kwargs.get('merged_linewidth', None)
@@ -2362,44 +2422,47 @@ class MajorTrack(object):
             tp_clusters = []
             for _i in range(len(_grouping)):
                 _group = _grouping[_i]
-                # is it a merged group
-                _facecolor = _get_cluster_facecolor(idx, _i)
-                _edgecolor = _get_cluster_edgecolor(idx, _i)
-                _linewidth = _get_cluster_linewidth(idx, _i)
-                if isinstance(cluster_label_margin, dict):
-                    _label_margin = cluster_label_margin[idx][_i]
-                elif isinstance(cluster_label_margin, (tuple, list)):
-                    _label_margin = cluster_label_margin
-                else:
-                    _label_margin = (0.4 * cluster_width, 0.1)
-                if _edgecolor is None:
-                    _edgecolor = _facecolor
-                if treat_mergeds:
-                    if idx < len(self.cluster_trace):
-                        if self.cluster_trace[idx][_i] < 0:
-                            if merged_linewidth is not None:
-                                _linewidth = merged_linewidth
-                            if merged_edgecolor is not None:
-                                _edgecolor = merged_edgecolor
-                            if merged_facecolor is not None:
-                                _facecolor = merged_facecolor
-                if cluster_label == 'groupsize':
-                    c_label = '{0}'.format(len(_group))
-                elif cluster_label == 'group_index':
-                    c_label = '{0}'.format(_i)
-                else:
-                    c_label = None
-                tp_clusters.append(
-                        Cluster(
-                            height=len(_group),
-                            width=cluster_width,
-                            facecolor=_facecolor,
-                            edgecolor=_edgecolor,
-                            lw=_linewidth,
-                            label=c_label,
-                            label_margin=_label_margin
+                if include_cluster(idx, _group):
+                    # is it a merged group
+                    _facecolor = _get_cluster_facecolor(idx, _i)
+                    _edgecolor = _get_cluster_edgecolor(idx, _i)
+                    _linewidth = _get_cluster_linewidth(idx, _i)
+                    if isinstance(cluster_label_margin, dict):
+                        _label_margin = cluster_label_margin[idx][_i]
+                    elif isinstance(cluster_label_margin, (tuple, list)):
+                        _label_margin = cluster_label_margin
+                    else:
+                        _label_margin = (0.4 * cluster_width, 0.1)
+                    if _edgecolor is None:
+                        _edgecolor = _facecolor
+                    if treat_mergeds:
+                        if idx < len(self.cluster_trace):
+                            if self.cluster_trace[idx][_i] < 0:
+                                if merged_linewidth is not None:
+                                    _linewidth = merged_linewidth
+                                if merged_edgecolor is not None:
+                                    _edgecolor = merged_edgecolor
+                                if merged_facecolor is not None:
+                                    _facecolor = merged_facecolor
+                    if cluster_label == 'groupsize':
+                        c_label = '{0}'.format(len(_group))
+                    elif cluster_label == 'group_index':
+                        c_label = '{0}'.format(_i)
+                    else:
+                        c_label = None
+                    tp_clusters.append(
+                            Cluster(
+                                height=len(_group),
+                                width=cluster_width,
+                                facecolor=_facecolor,
+                                edgecolor=_edgecolor,
+                                lw=_linewidth,
+                                label=c_label,
+                                label_margin=_label_margin
+                            )
                         )
-                    )
+                else:
+                    tp_clusters.append(None)
             _clusters.append(tp_clusters)
         # 2nd round to set the fluxes
         if iterator is None:
@@ -2412,30 +2475,36 @@ class MajorTrack(object):
             _prev_grouping = self.clusterings[prev_idx]
             _x_pos_fluxes = []
             for _i in range(len(_grouping)):
-                for _j in range(len(_prev_grouping)):
-                    _intersect = len(
-                            _prev_grouping[_j].intersection(
-                                _grouping[_i]
-                                )
-                            )
-                    _linewidth = _get_flux_linewidth(prev_idx, _j, _i)
-                    if _intersect:
-                        _facecolor = _get_flux_facecolor(prev_idx, _j, _i)
-                        _edgecolor = _get_flux_edgecolor(prev_idx, _j, _i)
-                        if _edgecolor is None:
-                            _edgecolor = _facecolor
-                        _x_pos_fluxes.append(
-                                [
-                                    Flux(
-                                        flux=_intersect,
-                                        source_cluster=_clusters[prev_idx][_j],
-                                        target_cluster=_clusters[idx][_i],
-                                        facecolor=_facecolor,
-                                        edgecolor=_edgecolor,
-                                        lw=_linewidth
+                if include_cluster(idx, _grouping[_i]):
+                    for _j in range(len(_prev_grouping)):
+                        if include_cluster(idx-1, _prev_grouping[_j]):
+                            _intersect = len(
+                                    _prev_grouping[_j].intersection(
+                                        _grouping[_i]
                                         )
-                                    ]
-                                )
+                                    )
+                            _linewidth = _get_flux_linewidth(prev_idx, _j, _i)
+                            if _intersect:
+                                _facecolor = _get_flux_facecolor(
+                                        prev_idx, _j, _i)
+                                _edgecolor = _get_flux_edgecolor(
+                                        prev_idx, _j, _i)
+                                if _edgecolor is None:
+                                    _edgecolor = _facecolor
+                                _x_pos_fluxes.append(
+                                        [
+                                            Flux(
+                                                flux=_intersect,
+                                                source_cluster=_clusters[
+                                                    prev_idx][_j],
+                                                target_cluster=_clusters[
+                                                    idx][_i],
+                                                facecolor=_facecolor,
+                                                edgecolor=_edgecolor,
+                                                lw=_linewidth
+                                                )
+                                            ]
+                                        )
             _fluxes.append(
                     _x_pos_fluxes
                     )
