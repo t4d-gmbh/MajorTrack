@@ -22,7 +22,9 @@ class MajorTrack(object):
     ===========
 
     clusterings: list, dict
-      Sequence of clusterings.
+      Sequence of clusterings. Each clustering must be present in the form of
+      a list of membership-sets, i.e. a list of clusters with each cluster
+      being defined by a `set` of data source associated to it (its members).
 
       **If provided as a `dict`**:
 
@@ -31,7 +33,7 @@ class MajorTrack(object):
       values: list, dict
         The membership list of each clustering indicating to which cluster
         a data source belongs.
-        See :obj:`~MajorTrack.memberships` for details.
+        See :obj:`~MajorTrack.clusterings` for details.
     history: int
       sets the number of time points (or slices) the algorithm can maximally
       go back in time to check for majority matches.
@@ -238,7 +240,6 @@ class MajorTrack(object):
         else:
             self.timepoints = sorted(clusterings.keys())
             self.clusterings = list(clusterings[tp] for tp in self.timepoints)
-        assert isinstance(self.clusterings[0], set)
         self.length = len(self.timepoints)
         # now determine the slice widths
         self.slice_widths = kwargs.get('slice_widths', None)
