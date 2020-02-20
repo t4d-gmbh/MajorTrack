@@ -63,7 +63,7 @@ class MajorTrack(object):
         Determine if :obj:`~LazyList`'s should be used to store data about
         dynamic clusters or normal lists.
         Most likely you want to use normal lists.
-        
+
     .. bibliography:: ../references.bib
 
     Attributes
@@ -102,7 +102,7 @@ class MajorTrack(object):
 
     group_mappings: list(list)
       Holds for each slice a list of mapping sets. The list is ordered like
-      :attr:`~.MajorTrack.grougings`.
+      :obj:`~.MajorTrack.grougings`.
 
       Example
       --------
@@ -234,6 +234,7 @@ class MajorTrack(object):
         else:
             self.timepoints = sorted(clusterings.keys())
             self.clusterings = list(clusterings[tp] for tp in self.timepoints)
+        assert isinstance(self.clusterings[0], set)
         self.length = len(self.timepoints)
         # now determine the slice widths
         self.slice_widths = kwargs.get('slice_widths', None)
@@ -382,11 +383,11 @@ class MajorTrack(object):
 
         If further arguments are provided (all have to be unnamed), then the
         union is taken between all of these time points.
-            
+
         Example
         -------
         .. code-block:: python
-              
+
           self.resident_population(2,4,5)
 
         This will return the combined population of the time points 2, 4
@@ -846,14 +847,15 @@ class MajorTrack(object):
         Parameters
         ===========
         matchup_method: str (default=None)
-          If provided this overwrites :attr:`~.MajorTrack.group_matchup_method`.
+          If provided this overwrites
+          :attr:`~majortrack.MajorTrack.group_matchup_method`.
           It determines the method to use when calculating similarities between
           clusters from neighbouring snapshots.
 
         Returns
         =======
         self: :class:`.MajorTrack`
-          with new attribute :attr:`~.MajorTrack.group_matchup`.
+          with new attribute :obj:`~.MajorTrack.group_matchup`.
 
         """
         if matchup_method is None:
@@ -1956,7 +1958,7 @@ class MajorTrack(object):
         None: None
           Adds new attributes:
 
-          - attr:`~.MajorTrack.community_shrinkages`
+          - :attr:`~.MajorTrack.community_shrinkages`
         """
         # birth events are not growth events
         self.community_shrinkages = [[]]
@@ -2073,7 +2075,7 @@ class MajorTrack(object):
         None: None
           Adds new attributes:
 
-          - attr:`~.MajorTrack.community_autocorrs`
+          - :attr:`~.MajorTrack.community_autocorrs`
         """
         self.community_autocorrs = {}
         for idx in range(1, self.length):
