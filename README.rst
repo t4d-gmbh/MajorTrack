@@ -1,6 +1,9 @@
 MajorTrack
 ==========
 
+.. image:: https://zenodo.org/badge/184266412.svg
+   :target: https://zenodo.org/badge/latestdoi/184266412
+
 Dynamic community detection method tracking persistent but transiently
 discontinuous communities in time window graphs.
 
