@@ -1851,12 +1851,12 @@ class MajorTrack(object):
                                 if memb in res_pop
                                 ]
                         if all([nm in membs for nm in next_membs]):
-                            # all come from `comm` > split distruction
+                            # all come from `comm` > split destruction
                             _destroyed_by_split.append(
                                     ([comm], [])
                                     )
                         else:
-                            # also a merge > split-merge distruction
+                            # also a merge > split-merge destruction
                             _destroyed_by_split_merge.append(
                                     ([comm], [])
                                     )
@@ -1868,8 +1868,10 @@ class MajorTrack(object):
 
     def get_community_merges(self,):
         """
-        Get all merge events and determine what clusters arise through pure
-        merge events.
+        Get merge events and determine the DC's born through merge events.
+
+        A merge event occurs whenever members of two distinct DC at some time
+        point are found together in the same DC one time point later.
 
         Returns
         =======
@@ -1887,8 +1889,8 @@ class MajorTrack(object):
         self.community_dby_merges = [[]]
         for i in range(1, self.length):
             _merges = []
-            _new_cby_merge = []
-            _destroyed_by_merge = []
+            _newDC_by_merge = []
+            _destroyedDC_by_merge = []
             res_pop = self.resident_population(i-1, i)
             for comm, membs in self.comm_members[i].items():
                 prev_comms = set(
@@ -1916,7 +1918,7 @@ class MajorTrack(object):
                     if all([pm in membs for pm in prev_membs]):
                         # all members from the merging groups are now here
                         # so this is a pure merge
-                        _new_cby_merge.append(
+                        _newDC_by_merge.append(
                                 (list(prev_comms), [comm])
                                 )
                 dest_prev_comms = [
@@ -1933,11 +1935,11 @@ class MajorTrack(object):
                     if all([pm in membs for pm in prev_membs]):
                         # prev comm does not exist anymore and remaining membs
                         # are all in comm > merge without split
-                        _destroyed_by_merge.append(
+                        _destroyedDC_by_merge.append(
                                 ([dpc], [])
                                 )
-            self.community_cby_merges.append(_new_cby_merge)
-            self.community_dby_merges.append(_destroyed_by_merge)
+            self.community_cby_merges.append(_newDC_by_merge)
+            self.community_dby_merges.append(_destroyedDC_by_merge)
             self.community_merges.append(_merges)
 
     def get_community_growths(self,):
@@ -2175,7 +2177,7 @@ class MajorTrack(object):
             time window where the cluster should be put.
           cluster_label: str (default=None)
             determine how to label cluster. Possible options are:
-            
+
             * 'groupsize'
             * 'group_index'
 
@@ -2197,7 +2199,7 @@ class MajorTrack(object):
             either provide a single color, a keyword or a dict.
 
             Valid keywords are: ``'cluster'``.
-            
+
             If a dictionary is provided then the `idx` of the time series must
             be the keys with another dict as value holding a dict with a tuple
             as key and a color as value. The tuple's first element must  be a
