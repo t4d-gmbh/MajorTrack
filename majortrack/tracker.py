@@ -1802,19 +1802,22 @@ class MajorTrack(object):
                 )
                 if None in next_comms:
                     next_comms.remove(None)
+                # if we find the members of `comm` at `i-1` in more than 1
+                # community at `i`, we have a split.
                 if len(next_comms) > 1:
                     _splits.append(
                         ([comm], list(next_comms))
                     )
                 other_next_comms = [nc for nc in next_comms if nc != comm]
                 if other_next_comms:
-                    # check if any of them is new
+                    # check if any of the communities at `i` is new
                     new_next_comms = [
                             onc
                             for onc in other_next_comms
                             if onc not in comms
                             ]
-                    # check if only members from the source comm
+                    # check if only members from the `comm` are in the new
+                    # community/ies
                     for nnc in new_next_comms:
                         new_mc_res = [
                                 nmc
@@ -1827,7 +1830,10 @@ class MajorTrack(object):
                                     ([comm], [nnc])
                                     )
                         else:
-                            # new community through split-merge combo
+                            # the new community/ies at `i` also contain
+                            # resident elements that did not belong to `comm`
+                            # at `i-1`, thus communities from `i-1` have merged
+                            # into the new community/ies.
                             orig_comms = set(
                                     self.individual_membership[i-1].get(nmcr)
                                     for nmcr in new_mc_res
@@ -1837,7 +1843,7 @@ class MajorTrack(object):
                                     )
                     # check if comm was destroyed
                     if comm not in next_comms:
-                        # do come all res membs in the new comms from comm?
+                        # do all members of the new community come from `comm`?
                         next_membs = [
                                 memb
                                 for nc in next_comms
@@ -1845,7 +1851,7 @@ class MajorTrack(object):
                                 if memb in res_pop
                                 ]
                         if all([nm in membs for nm in next_membs]):
-                            # all come from comm > split distruction
+                            # all come from `comm` > split distruction
                             _destroyed_by_split.append(
                                     ([comm], [])
                                     )
