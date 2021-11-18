@@ -1,11 +1,15 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import os
 from datetime import datetime
-from collections import MutableSequence
 import pickle
 import shutil
 import itertools
 import atexit
+
+try:
+    from collections.abc import MutableSequence  # noqa
+except ImportError:
+    from collections import MutableSequence  # noqa
 
 
 class lazy_list(MutableSequence):
