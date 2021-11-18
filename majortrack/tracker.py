@@ -5,7 +5,10 @@ r"""
 """
 import itertools
 from functools import wraps
-from collections import Counter
+try:
+    from collections.abc import Counter # noqa
+except ImportError:
+    from collections import Counter # noqa
 from datetime import timedelta
 
 from .lazylist import lazy_list
