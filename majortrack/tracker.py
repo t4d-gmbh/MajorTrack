@@ -2271,9 +2271,9 @@ class MajorTrack(object):
                         self.get_community_coloring(
                             distinct_colors=distinct_colors
                             )
-        _clusters = []
-        _fluxes = []
-        _clusters_x_pos = []
+        _clusters = dict()
+        _fluxes = dict()
+        _clusters_x_pos = dict()
         # get the colors
 
         def _c_None(idx, group_id, *args):
@@ -2427,9 +2427,7 @@ class MajorTrack(object):
                 # )
                 move = 0.5 * self.slice_widths[idx]
             time_point = self.timepoints[idx] + move
-            _clusters_x_pos.append(
-                time_point
-            )
+            _clusters_x_pos[idx] = time_point
             tp_clusters = []
             for _i in range(len(_grouping)):
                 _group = _grouping[_i]
@@ -2474,7 +2472,7 @@ class MajorTrack(object):
                         )
                 else:
                     tp_clusters.append(None)
-            _clusters.append(tp_clusters)
+            _clusters[idx] = tp_clusters
         # 2nd round to set the fluxes
         if iterator is None:
             _iterator = iter(range(self.length))
@@ -2516,25 +2514,15 @@ class MajorTrack(object):
                                                 )
                                             ]
                                         )
-            _fluxes.append(
-                    _x_pos_fluxes
-                    )
+            _fluxes[idx] = _x_pos_fluxes
             prev_idx = idx
         self.sp_clusters = {
                 _clusters_x_pos[idx]: [
                     cluster for cluster in _clusters[idx]
                     if cluster is not None
-                    ]
-                for idx in range(len(_clusters))
+                    ] for idx in _clusters
                 }
-        self.sp_fluxes = {
-                _clusters_x_pos[idx]: _fluxes[idx]
-                for idx in range(len(_fluxes))
-                }
+        self.sp_fluxes = {_clusters_x_pos[idx]: _fluxes[idx]
+                          for idx in _fluxes}
 
-        self.alluvial = AlluvialPlot(
-                self.sp_clusters,
-                axes,
-                *args,
-                **kwargs
-                )
+        self.alluvial = AlluvialPlot(self.sp_clusters, axes, *args, **kwargs)
