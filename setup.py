@@ -33,7 +33,7 @@ setup(
         packages=['majortrack'],
         install_requires=[
             "matplotlib",
-            "pyalluv @ git+https://github.com/j-i-l/pyalluv@v0.1",
+            "pyalluv @ git+https://github.com/j-i-l/pyalluv@v0.1.1",
             "colorsequence @ git+https://github.com/j-i-l/colorsequence@v0.1",
         ],
         test_suite='nose.collector',
