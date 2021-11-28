@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Liechti"
+  given-names: "Jonas"
+  orcid: "https://orcid.org/0000-0003-3447-3060"
+title: "MajorTrack: A time-resolved clustering method"
+version: 1.0.0
+doi: 10.5281/zenodo.3763119
+date-released: 2020-04-23
+url: "https://github.com/j-i-l/MajorTrack"
+# preferred-citation:
+#   type: article
+#   authors:
+#   - family-names: "Liechti"
+#     given-names: "Jonas"
+#     orcid: "https://orcid.org/0000-0003-3447-3060"
+#   - family-names: "Bonhoeffer"
+#     given-names: "Sebastian"
+#     orcid: "https://orcid.org/0000-0001-8052-3925"
+#   eprint: "1912.04261"
+#   archivePrefix: "arXiv"
+#   journal: "arxiv.org"
+#   month: 2
+#   title: "A time resolved clustering method revealing longterm structures and their short-term internal dynamics"
+#   year: 2020
