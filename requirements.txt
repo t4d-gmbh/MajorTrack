@@ -1,3 +1,0 @@
-matplotlib
-pyalluv @ git+https://github.com/j-i-l/pyalluv.git
-git+https://github.com/j-i-l/colorsequence.git
