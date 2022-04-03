@@ -137,7 +137,9 @@ class MajorTrack(object):
       Number of dynamic clusters present in dataset.
     comm_all: list(dc index what type?)
       List of all dynamic clusters  present in the dataset.
-    comm_group_members: ?
+    comm_group_members: list
+      Holds for each slice a dictionary with the dynamic cluster id's as key
+      and a list of group id's as value.
 
       .. todo::
 
@@ -1033,7 +1035,7 @@ class MajorTrack(object):
         # TODO: from_idx must be 0 as otherwise the method might fail by
         # accessing an index < from_ids in self.dcs
 
-        # populate communites with empty lists up to the starting point
+        # populate communities with empty lists up to the starting point
         for _idx in range(from_idx):
             self.dcs.append([])
             self.cluster_trace.append([])
@@ -2183,6 +2185,7 @@ class MajorTrack(object):
 
             * 'groupsize'
             * 'group_index'
+            * 'dc_index'
 
           merged_edgecolor: str (default=None)
             edgecolor of merged clusters.
@@ -2457,6 +2460,8 @@ class MajorTrack(object):
                         c_label = '{0}'.format(len(_group))
                     elif cluster_label == 'group_index':
                         c_label = '{0}'.format(_i)
+                    elif cluster_label == 'dc_index':
+                        c_label = '{0}'.format(self.dcs[idx][_i])
                     else:
                         c_label = None
                     tp_clusters.append(
