@@ -1,0 +1,26 @@
+{
+    "id": "D846CB7F",
+    "path": "~/Nextcloud/Research/Projects/Other/JonasLiechti/synthetic_simulations/src/generate_modify_partitions.R",
+    "project_path": "src/generate_modify_partitions.R",
+    "type": "r_source",
+    "hash": "32661700",
+    "contents": "",
+    "dirty": false,
+    "created": 1739831231570.0,
+    "source_on_save": false,
+    "relative_order": 5,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "36,1",
+        "scrollLine": "25"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1740606129,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1740606129675,
+    "read_only": false,
+    "read_only_alternatives": []
+}

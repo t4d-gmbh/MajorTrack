@@ -1,0 +1,19 @@
+
+simulate_interactions <- function(N, probability_matrices, time_steps) {
+  interaction_matrices <- list()
+  # This function randomly draws time_steps matrices of interaction between
+  # N elements according to the the probabilities specified by probability
+  # matrices contained in the list probability_matrices. Therefore, the total
+  # number of matrices generated will be time_steps * length(probabiliy_matrices)
+  step_idx <- 1
+  for (m in seq_along(probability_matrices)) {
+    for (t in 1:time_steps[m]) {
+      interaction_matrix <- matrix(rbinom(N * N, 1, probability_matrices[[m]]), nrow=N, ncol=N)
+      diag(interaction_matrix) <- 0  # No self-interactions
+      interaction_matrices[[step_idx]] <- interaction_matrix
+      step_idx <- step_idx + 1
+    }
+  }
+  
+  return(interaction_matrices)
+}

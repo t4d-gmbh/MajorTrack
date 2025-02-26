@@ -1,0 +1,26 @@
+{
+    "id": "72995E1B",
+    "path": "~/Nextcloud/Research/Projects/Other/JonasLiechti/synthetic_simulations/src/example_use.R",
+    "project_path": "src/example_use.R",
+    "type": "r_source",
+    "hash": "2098462174",
+    "contents": "",
+    "dirty": false,
+    "created": 1739838838279.0,
+    "source_on_save": false,
+    "relative_order": 6,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "31,40",
+        "scrollLine": "20"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1740605858,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1740605858915,
+    "read_only": false,
+    "read_only_alternatives": []
+}
