@@ -246,6 +246,13 @@ class MajorTrack(object):
             self.timepoints = sorted(clusterings.keys())
             self.clusterings = list(clusterings[tp] for tp in self.timepoints)
         self.length = len(self.timepoints)
+        empty = [tp for tp, clust in zip(self.timepoints, self.clusterings)
+                 if not len(clust)]
+        if empty:
+            raise ValueError(
+                'MajorTrack requires at least one group at every time point; '
+                'time points without groups: {}'.format(empty)
+            )
         # now determine the slice widths
         self.slice_widths = kwargs.get('slice_widths', None)
         if isinstance(self.slice_widths, (float, int, timedelta)):
@@ -985,7 +992,7 @@ class MajorTrack(object):
                         ]
             return span_tree_idxs
 
-    def get_dcs(self, bijective_paths=True, **kwargs):
+    def get_dcs(self, bijective_paths=True, absorption=True, **kwargs):
         r"""
         Derives from the history of dynamic clusters from
         :attr:`~.MajorTrack.group_matchup`.
@@ -1000,6 +1007,11 @@ class MajorTrack(object):
           If set to `True` then at each step in the construction of the tracing
           flow a mapping flow needs to map forward to the target cluster in
           order to continue to extend the tracing flow.
+        absorption: bool (default=True)
+          If set to `True`, clusters in the marginal flows of an identity flow
+          (i.e. clusters both in the mapper tree of the target cluster and in
+          the tracer tree of its source set) are absorbed into the dynamic
+          cluster of the identity flow. If `False`, they keep their own label.
 
         \**kwargs optional parameter:
           from_idx: int
@@ -1086,8 +1098,11 @@ class MajorTrack(object):
                             idx, s_c, included_flow
                             )
                 # # now the marginal dcs still need to be relabeled
-                marginal_flows = self.get_marginal_flows(idx, included_flow)
-                self._relabel_marginal_flows(s_c, idx, marginal_flows)
+                if absorption:
+                    marginal_flows = self.get_marginal_flows(
+                            idx, included_flow
+                            )
+                    self._relabel_marginal_flows(s_c, idx, marginal_flows)
 
     def _relabel_included_flow(self, idx, source_community, included_flow):
         r"""
@@ -2157,7 +2172,7 @@ class MajorTrack(object):
             self, axes, iterator=None, cluster_width=timedelta(days=1),
             *args, **kwargs
             ):
-        """
+        r"""
         Takes a matplotlib axes and draws an alluvialdiagram on it.
         `iterator` is the iterator s to draw the clusters for.
         If `iterator is not provided, then the alluvialdiagram will contain all

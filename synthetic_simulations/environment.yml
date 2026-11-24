@@ -1,0 +1,22 @@
+# Environment used to run the synthetic benchmark and the tuning tool.
+# Create with:  conda env create -f synthetic_simulations/environment.yml
+# then install MajorTrack from the repository root:  pip install -e .
+name: majortrack-benchmark
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - numpy=2.4
+  - scipy=1.17
+  - pandas=3.0
+  - matplotlib=3.11
+  - scikit-learn=1.9
+  - python-igraph=1.0
+  - leidenalg=0.12
+  - pip
+  - pip:
+      - rdata==1.1.0
+      - "pyalluv @ git+https://github.com/j-i-l/pyalluv@v0.1.1"
+      - "colorsequence @ git+https://github.com/j-i-l/colorsequence@v0.1"
+# R (>= 4.0) with the packages gplots and rprojroot is required to
+# regenerate the synthetic data (src/main.R).
